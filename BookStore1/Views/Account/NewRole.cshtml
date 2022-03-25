@@ -1,0 +1,33 @@
+﻿
+@model RoleModel
+@{
+    ViewData["Title"] = "NewRole";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+<h1>NewRole</h1>
+
+
+@section Body{
+
+    <form method="post">
+
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="control-label">Name </label>
+                    <input type="text" asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name"> </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12">
+                <input type="submit" value="Save" asp-action="NewRole" class="btn btn-primary" />
+            </div>
+
+        </div>
+
+    </form>
+}

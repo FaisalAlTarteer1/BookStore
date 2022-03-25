@@ -1,0 +1,139 @@
+﻿@model BookStore1.Models.CategoryVM
+@{
+    ViewData["Title"] = "Author";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+@section Head{
+    <script type="text/javascript">
+
+
+        $(document).ready(function () {
+            $(".liEdit").click(function () {
+                debugger;
+                var category = $(this).parent().parent().find("#catID").text();
+                $.ajax({
+                    type: 'GET',
+                    url: 'http://localhost/bookProject1/api/ajax/EditCategory?id=' + category,
+                    //url: 'http://localhost/bookProject1/Book/Edit?id=' + book,
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (data) {
+                        debugger;
+                        $("#catCode").val(data.Category.Code);
+                        $("#catName").val(data.Category.Name);
+
+                        console.log(data);
+                    },
+                    error: function (ex) {
+                        alert("Error")
+                    }
+                });
+                window.$('#categoryModal').modal('show');
+               // $("#bookModal").model('show');
+            });
+        });
+
+    </script>
+}
+@section body{
+    <form method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Category.Id" />
+
+
+        <div class="row" style="margin-left: 10px; margin-top: 10px">
+            <div class="col-xs-3 col-lg-3">
+                <button type="button" style="width: 128px;" class="btn btn-warning" data-toggle="modal" data-target="#categoryModal">New Category</button>
+
+                <input type="text" style="margin-left: 208px;margin-top: -37px;width: 254px;" class="form-control" name="searchCategory" />
+                <button type="submit" style="margin-left: 479px;margin-top: -67px;" class="btn btn-outline-warning" asp-controller="Category" asp-action="Search"><i class="fa fa-search" aria-hidden="true"></i> </button>
+            </div>
+        </div>
+
+
+        <div class="modal fade" id="categoryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">categories</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <span>Category Code</span>
+                            <input type="text" id="catCode" class="form-control" placeholder="Category Code" asp-for="Category.Code" />
+                        </div>
+                        <div class="form-group">
+                            <span>Category Name</span>
+                            <input type="text" id="catName" class="form-control" placeholder="Category Name" asp-for="Category.Name" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                        @if (Model.Category.Id > 0)
+                        {
+                            <button type="submit" class="btn btn-outline-warning" asp-controller="Category" asp-action="Update">Update</button>
+                        }
+                        else
+                        {
+                            <button type="submit" class="btn btn-outline-warning" asp-controller="Category" asp-action="saveData">Save</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-9" style="margin-left: 228px; margin-top: 22px ">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                #
+                            </th>
+                            <th>
+                                Category Code
+                            </th>
+                            <th>
+                                Category Name
+                            </th>
+                            <th>
+                                Action
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.liCategory)
+                        {
+                            <tr>
+                                <td id="catID" style="padding-right: 100px;">
+                                    @item.Id
+                                </td>
+                                <td style="padding-right: 100px;">
+                                    @item.Code
+                                </td>
+                                <td style="padding-right: 100px;">
+                                    @item.Name
+                                </td>
+                                <td style="padding-right: 100px;">
+                                    <a  class="liEdit button button1 btn btn-outline-warning">
+                                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                    </a>
+                                    <a asp-controller="Category" asp-action="DeleteCategory" asp-route-id='@item.Id' class="button button1 btn btn-outline-warning" style="margin-left: 47px;margin-top: -68px;">
+                                        <i class="fa fa-trash fa-lg" aria-hidden="true"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+    </form>
+
+}

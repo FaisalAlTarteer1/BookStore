@@ -1,0 +1,198 @@
+﻿@model BookStore1.Models.BookVM
+@using BookStore1.Data
+
+@{
+    ViewData["Title"] = "Author";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+@section Head{
+    <script type="text/javascript">
+
+
+        $(document).ready(function () {
+            $(".liEdit").click(function () {
+                debugger;
+                var book = $(this).parent().parent().find(".bookID").text();          
+                $.ajax({
+                    type: 'GET',
+                    url: 'http://localhost/bookProject1/api/ajax/EditBook?id=' + book,
+                    //url: 'http://localhost/bookProject1/Book/Edit?id=' + book,
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (data) {
+                        debugger;
+                        $("#bookTitle").val(data.book.bookTitle);
+                        $("#bookYear").val(data.book.Year);
+                        $("#bookPrice").val(data.book.Price);
+                        $("#bookCategory").val(data.category.Id);
+                        $("#bookAuthor").val(data.author.Id);
+                        $("#bookStock").val(data.book.Stock);
+                        console.log(data);
+                    },
+                    error: function (ex) {
+                        alert(ex.statusText + ex.status)
+                    }
+                });
+                window.$('#bookModal').modal('show');
+               // $("#bookModal").model('show');
+            });
+        });
+
+    </script>
+}
+@section body{
+
+    <form method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="book.id" />
+        <input type="hidden" asp-for="book.Cover" />
+        <div class="row" style="margin-left: 10px; margin-top: 10px">
+            <div class="col-xs-3 col-lg-3">
+                <button type="button" style="width: 128px;" class="btn btn-warning" data-toggle="modal" data-target="#bookModal">New Book</button>
+
+                <input type="text" style="margin-left: 208px;margin-top: -37px;width: 254px;" class="form-control" name="searchBook" />
+                <button type="submit" style="margin-left: 479px;margin-top: -67px;" class="btn btn-outline-warning" asp-controller="Book" asp-action="Search"><i class="fa fa-search" aria-hidden="true"></i> </button>
+            </div>
+        </div>
+
+
+
+        <div class="modal fade" id="bookModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Authors</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <span>Book Title</span>
+                            <input type="text" id="bookTitle" class="form-control" placeholder="Book Title" asp-for="book.bookTitle" />
+                        </div>
+                        <div class="form-group">
+                            <span>Year</span>
+                            <input type="text" id="bookYear" class="form-control" placeholder="Year" asp-for="book.Year" />
+                        </div>
+                        <div class="form-group">
+                            <span>Price</span>
+                            <input type="text" id="bookPrice" class="form-control" placeholder="Price" asp-for="book.Price" />
+                        </div>
+                        <div class="form-group">
+                            <span>Category</span>
+                            <select class="form-control" id="bookCategory" asp-items='new SelectList(Model.liCategory,"Id","Name")' asp-for="book.Categoy_id">
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <span>Author</span>
+                            <select class="form-control" id="bookAuthor" asp-items='new SelectList(Model.liAuthor,"Id","firstName")' asp-for="book.Author_id">
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <span>Image</span>
+                            <input type="file" class="form-control" asp-for="book.Cover" />
+                        </div>
+                        <div class="form-group">
+                            <span>Stock</span>
+                            <input type="text" id="bookStock" class="form-control" placeholder="Stock" asp-for="book.Stock" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                        @if (Model.book.id > 0)
+                            {
+                                <button type="submit" class="btn btn-outline-warning" asp-controller="Book" asp-action="Update">Update</button>
+                            }
+                            else
+                            {
+                                <button type="submit" class="btn btn-outline-warning" asp-controller="Book" asp-action="saveData">Save</button>
+                            }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-9" style="margin-left: 36px; margin-top: 22px ">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                #
+                            </th>
+                            <th>
+                                Book Title
+                            </th>
+                            <th>
+                                cover
+                            </th>
+                            <th>
+                                Year
+                            </th>
+                            <th>
+                                Price
+                            </th>
+                            <th>
+                                Category
+                            </th>
+                            <th>
+                                Author
+                            </th>
+                            <th>
+                                Stock
+                            </th>
+                            <th>
+                                Action
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (Book item in Model.liBook)
+                        {
+                        <tr>
+                            <td class="bookID" style="padding-right: 75px;">
+                                @item.id
+                            </td>
+                            <td style="padding-right: 75px;">
+                                @item.bookTitle
+                            </td>
+                            <td style="padding-right: 75px;">
+                                <img src='@item.path' style="width: 70px" />
+                            </td>
+                            <td style="padding-right: 75px;">
+                                @item.Year
+                            </td>
+                            <td style="padding-right: 75px;">
+                                @item.Price
+                            </td>
+
+                            <td style="padding-right: 75px;">
+                                @item.category.Name
+                            </td>
+                            <td style="padding-right: 75px;">
+                                @item.author.firstName
+                            </td>
+                            <td style="padding-right: 75px;">
+                                @item.Stock
+                            </td>
+                            <td style="padding-right: 75px;">
+                                <a  class="liEdit button button1 btn btn-outline-warning">
+                                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                </a>
+                                <a asp-controller="Book" asp-action="Delete" asp-route-id='@item.id' class="button button1 btn btn-outline-warning" style="margin-left: 47px;margin-top: -68px;">
+                                    <i class="fa fa-trash fa-lg" aria-hidden="true"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        }
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+    </form>
+
+}
